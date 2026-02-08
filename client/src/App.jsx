@@ -18,6 +18,9 @@ function App() {
   // Selected date for daily view
   const [selectedDate, setSelectedDate] = useState(null);
 
+  // Force calendar refresh trigger
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
   // --- Login handler ---
   function handleLogin(userData) {
     setUser(userData);
@@ -43,6 +46,12 @@ function App() {
     setSelectedDate(null);
   }
 
+  // --- Task created successfully ---
+  function handleTaskCreated() {
+    setRefreshTrigger(prev => prev + 1);
+    setPage("calendar");
+  }
+
   // --- Not logged in → show login ---
   if (!user) {
     return <LoginPage onLogin={handleLogin} />;
@@ -63,7 +72,7 @@ function App() {
       return (
         <CreateTaskPage
           onBack={handleBackToCalendar}
-          onCreated={handleBackToCalendar}
+          onCreated={handleTaskCreated}
         />
       );
 
@@ -75,6 +84,7 @@ function App() {
             user={user}
             onSelectDate={handleSelectDate}
             onLogout={handleLogout}
+            refreshTrigger={refreshTrigger}
           />
           {/* Admin floating action button */}
           {user.role === "admin" && (

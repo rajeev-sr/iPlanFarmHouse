@@ -63,7 +63,7 @@ function buildTaskLabels(tasks) {
     }));
 }
 
-export default function CalendarPage({ user, onSelectDate, onLogout }) {
+export default function CalendarPage({ user, onSelectDate, onLogout, refreshTrigger }) {
     const today = new Date();
     const [viewDate, setViewDate] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
     const [calendarData, setCalendarData] = useState({});
@@ -74,7 +74,7 @@ export default function CalendarPage({ user, onSelectDate, onLogout }) {
     const month = viewDate.getMonth();
     const monthStr = formatMonth(viewDate);
 
-    // Fetch calendar data when month changes
+    // Fetch calendar data when month changes or refresh triggered
     useEffect(() => {
         setLoading(true);
         const userId = user.role === "worker" ? user.id : null;
@@ -85,7 +85,7 @@ export default function CalendarPage({ user, onSelectDate, onLogout }) {
             })
             .catch(console.error)
             .finally(() => setLoading(false));
-    }, [monthStr, user]);
+    }, [monthStr, user, refreshTrigger]);
 
     // Navigate months
     function prevMonth() {

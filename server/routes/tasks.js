@@ -198,6 +198,36 @@ router.get("/calendar/:month", async (req, res) => {
       });
     }
 
+    // Add carry-forward tasks to all days in the month starting from today or month start
+    const today = new Date().toISOString().split("T")[0];
+    const monthStart = `${month}-01`;
+    const startFrom = today > monthStart ? today : monthStart;
+    
+    // Get all dates in the month from startFrom to endDate
+    const start = new Date(startFrom);
+    const end = new Date(endDate);
+    
+    for (const carryTask of carryResult.rows) {
+      const currentDate = new Date(start);
+      while (currentDate <= end) {
+        const dateKey = currentDate.toISOString().split("T")[0];
+        if (!calendar[dateKey]) calendar[dateKey] = [];
+        
+        // Check if this carry-forward task is not already in the day (as its scheduled date)
+        const alreadyExists = calendar[dateKey].some(t => t.id === carryTask.id);
+        if (!alreadyExists) {
+          calendar[dateKey].push({
+            id: carryTask.id,
+            title: carryTask.title,
+            status: carryTask.status,
+            assigned_user_name: carryTask.assigned_user_name,
+            carry_forward: true,
+          });
+        }
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+    }
+
     // Add carry-forward count info
     const carryForwardCount = carryResult.rows.length;
 

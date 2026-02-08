@@ -7,7 +7,7 @@ import { fetchTasks, completeTask } from "../api";
 import { formatDateDisplay } from "../utils/dates";
 
 // Category filter buttons (matches reference)
-const FILTERS = ["All", "Sowing", "Irrigation", "Pest", "Fertilizer", "Harvest"];
+const FILTERS = ["All", "Sowing", "Irrigation", "Pest", "Fertilizer", "Harvest", "Transplant", "Weeding"];
 
 /**
  * Detect task category from title
