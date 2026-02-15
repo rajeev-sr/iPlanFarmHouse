@@ -12,7 +12,9 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { testConnection } from "./db.js";
 import authRoutes from "./routes/auth.js";
-import taskRoutes from "./routes/tasks.js";
+import farmRoutes from "./routes/farms.js";
+import dataRoutes from "./routes/data.js";
+import activityRoutes from "./routes/activities.js";
 
 dotenv.config();
 
@@ -25,7 +27,9 @@ app.use(express.json());
 
 // --- Routes ---
 app.use("/auth", authRoutes);
-app.use("/tasks", taskRoutes);
+app.use("/farms", farmRoutes);
+app.use("/data", dataRoutes);
+app.use("/activities", activityRoutes);
 
 // --- Health check ---
 app.get("/", (req, res) => {

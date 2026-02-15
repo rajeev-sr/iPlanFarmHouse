@@ -8,30 +8,18 @@ const router = Router();
 
 /**
  * POST /auth/login
- * Body: { role: "admin" | "worker", userId?: number }
+ * Body: { userId }
  * Returns: user object
- *
- * In demo mode, just pick a user by role or specific ID
  */
 router.post("/login", async (req, res) => {
   try {
-    const { role, userId } = req.body;
+    const { userId } = req.body;
+    if (!userId) return res.status(400).json({ error: "userId is required" });
 
-    let result;
-    if (userId) {
-      // Login as specific user
-      result = await pool.query("SELECT * FROM users WHERE id = $1", [userId]);
-    } else {
-      // Login as first user with this role
-      result = await pool.query("SELECT * FROM users WHERE role = $1 LIMIT 1", [
-        role,
-      ]);
-    }
-
+    const result = await pool.query("SELECT id, name, phone, role FROM users WHERE id = $1", [userId]);
     if (result.rows.length === 0) {
       return res.status(404).json({ error: "User not found" });
     }
-
     res.json({ user: result.rows[0] });
   } catch (err) {
     console.error("Login error:", err.message);
@@ -41,12 +29,12 @@ router.post("/login", async (req, res) => {
 
 /**
  * GET /auth/users
- * Returns all users (for role selection screen)
+ * Returns all users (for login selection screen)
  */
 router.get("/users", async (req, res) => {
   try {
     const result = await pool.query(
-      "SELECT id, name, role FROM users ORDER BY role, name",
+      "SELECT id, name, phone, role FROM users ORDER BY role, name"
     );
     res.json({ users: result.rows });
   } catch (err) {
